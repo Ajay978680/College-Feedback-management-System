@@ -1,0 +1,19 @@
+/* Custom styles for College Feedback Management System */
+body {
+    background: linear-gradient(135deg, #e0eafc, #cfdef3);
+    min-height: 100vh;
+}
+.card {
+    border-radius: 1rem;
+}
+.card-header {
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+}
+.btn-success {
+    background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+    border: none;
+}
+.btn-success:hover {
+    background: linear-gradient(90deg, #38f9d7 0%, #43e97b 100%);
+}
