@@ -9,28 +9,61 @@ def init_db():
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS feedback (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        reg_no TEXT NOT NULL,
         name TEXT NOT NULL,
         email TEXT NOT NULL,
         department TEXT NOT NULL,
         message TEXT NOT NULL
+    )''')
+    c.execute('''CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL
     )''')
     conn.commit()
     conn.close()
 
 @app.route('/')
 def index():
+    if not session.get('admin_logged_in'):
+        return redirect(url_for('login'))
     return render_template('index.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        conn = sqlite3.connect('feedback.db')
+        c = conn.cursor()
+        try:
+            c.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, password))
+            conn.commit()
+            flash('Registration successful! Please log in.', 'success')
+            return redirect(url_for('login'))
+        except sqlite3.IntegrityError:
+            flash('Username already exists. Please choose another.', 'danger')
+        finally:
+            conn.close()
+    return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        if username == 'spark' and password == 'spark001':  # Set your admin credentials here
+        conn = sqlite3.connect('feedback.db')
+        c = conn.cursor()
+        c.execute('SELECT * FROM users WHERE username = ? AND password = ?', (username, password))
+        user = c.fetchone()
+        conn.close()
+        if user:
             session['admin_logged_in'] = True
+            session['username'] = username
             return redirect(url_for('admin'))
         else:
-            flash('Invalid username or password', 'danger')
+            flash('User does not exist or wrong password.', 'danger')
+            # Do NOT redirect to register from admin login
     return render_template('login.html')
 
 @app.route('/logout')
@@ -40,13 +73,14 @@ def logout():
 
 @app.route('/submit', methods=['POST'])
 def submit_feedback():
+    reg_no = request.form['reg_no']
     name = request.form['name']
     email = request.form['email']
     department = request.form['department']
     message = request.form['message']
     conn = sqlite3.connect('feedback.db')
     c = conn.cursor()
-    c.execute('INSERT INTO feedback (name, email, department, message) VALUES (?, ?, ?, ?)', (name, email, department, message))
+    c.execute('INSERT INTO feedback (reg_no, name, email, department, message) VALUES (?, ?, ?, ?, ?)', (reg_no, name, email, department, message))
     conn.commit()
     conn.close()
     return redirect(url_for('index'))

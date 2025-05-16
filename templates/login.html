@@ -2,40 +2,72 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Login</title>
+    <title>Login | Feedback System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .glass-card {
+            background: rgba(44, 47, 52, 0.85);
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 2.5rem 2rem;
+            width: 100%;
+            max-width: 400px;
+        }
+        .glass-card h2 {
+            color: #90caf9;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        .btn-custom {
+            background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+            border: none;
+            color: #232526;
+            font-weight: 600;
+        }
+        .btn-custom:hover {
+            background: linear-gradient(90deg, #38f9d7 0%, #43e97b 100%);
+            color: #232526;
+        }
+        .register-link {
+            color: #90caf9;
+            text-decoration: underline;
+        }
+        .register-link:hover {
+            color: #38f9d7;
+        }
+    </style>
 </head>
-<body class="bg-light">
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-4">
-                <div class="card shadow">
-                    <div class="card-header bg-primary text-white text-center">
-                        <h2>Admin Login</h2>
-                    </div>
-                    <div class="card-body">
-                        {% with messages = get_flashed_messages(with_categories=true) %}
-                        {% if messages %}
-                            {% for category, message in messages %}
-                                <div class="alert alert-{{ category }}">{{ message }}</div>
-                            {% endfor %}
-                        {% endif %}
-                        {% endwith %}
-                        <form method="post">
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="username" name="username" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
-                            </div>
-                            <button type="submit" class="btn btn-success w-100">Login</button>
-                        </form>
-                    </div>
-                </div>
+<body>
+    <div class="glass-card">
+        <h2 class="text-center">Admin Login</h2>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} text-center">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <form method="post">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required autofocus>
             </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-custom w-100 mb-2">Login</button>
+        </form>
+        <div class="text-center mt-3">
+            <span>Don't have an account? <a href="{{ url_for('register') }}" class="register-link">Register</a></span>
         </div>
     </div>
 </body>
